@@ -1,12 +1,13 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-const App = () => {
-  return (
-    <>
-      <h1>Componete Principal</h1>
-    </>
-  );
-}
+import Encabezado from "./components/navegacion/Encabezado";
 
-export default App;
+import Inicio from "./views/Inicio";
+import Categorias from "./views/Categorias";
+import Catalogo from "./views/Catalogo";
+import Productos from "./views/Productos";
+import Login from "./views/Login";
+import RutaProtegida from "./components/rutas/RutaProtegida";
+import Pagina404 from "./views/Pagina404";
+
+import "./App.css";
