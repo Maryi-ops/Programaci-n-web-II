@@ -1,25 +1,17 @@
-const App = () => {
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+
+const RutaProtegida = () => {
+
   return (
-    <Router>
-
-      <Encabezado />
-
-      <main className="margen-superior-main">
-        <Routes>
-
-          <Route path="/login" element={<Login />} />
-
-          <Route path="/" element={<RutaProtegida><Inicio /></RutaProtegida>} />
-          <Route path="/categorias" element={<RutaProtegida><Categorias /></RutaProtegida>} />
-          <Route path="/catalogo" element={<Catalogo />} />
-          <Route path="/productos" element={<RutaProtegida><Productos /></RutaProtegida>} />
-
-          <Route path="*" element={<Pagina404 />} />
-
-        </Routes>
-      </main>
-    </Router>
+    <Container className="mt-3">
+      <Row className="align-items-center">
+        <Col>
+          <h2><i className="bi-house-fill me-2"></i> Ruta Protegida </h2>
+        </Col>
+      </Row>
+    </Container>
   );
-}
+};
 
-export default App;
+export default RutaProtegida;
