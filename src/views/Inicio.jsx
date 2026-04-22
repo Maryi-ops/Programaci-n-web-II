@@ -12,5 +12,6 @@ const Inicio = () => {
       </Row>
     </Container>
   );
+  
 }
 export default Inicio;
