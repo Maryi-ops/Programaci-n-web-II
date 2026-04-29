@@ -39,12 +39,14 @@ const Paginacion = ({
           totalPaginas,
           paginaInicio + maximoPaginasAMostrar - 1
         );
+      
 
         if (paginaFin - paginaInicio + 1 < maximoPaginasAMostrar) {
           paginaInicio = Math.max(
             1,
             paginaFin - maximoPaginasAMostrar + 1
           );
+        }
 
           for (let numeroPagina = paginaInicio; numeroPagina <= paginaFin; numeroPagina++) {
             elementosPaginacion.push(
@@ -57,7 +59,7 @@ const Paginacion = ({
               </Pagination.Item >
             );
           }
-
+    
           return (
 
             <Row className="mt-1 align-items-center">
@@ -113,10 +115,7 @@ const Paginacion = ({
 
             </Row >
 
-
           );
         };
         
-
-
         export default Paginacion;
