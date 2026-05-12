@@ -1,3 +1,5 @@
+import { Container, Row, Col } from "react-bootstrap";
+
 const Pagina404 = () => {
   return (
     <Container className="mt-3">

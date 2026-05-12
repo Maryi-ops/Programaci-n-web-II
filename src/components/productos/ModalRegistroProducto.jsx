@@ -35,11 +35,12 @@ const ModalRegistroProducto = ({
             <Modal.Body>
                 <Form>
                     <Row>
+
                         <Col xs={12} md={6}>
                             <Form.Group className="mb-3">
-                                <Form.Label>Categoria *</Form.Label>
+                                <Form.Label>Categoría *</Form.Label>
                                 <Form.Select
-                                    name="id_categoria_producto"
+                                    name="categoria_producto"
                                     value={nuevoProducto.categoria_producto || ""}
                                     onChange={manejoCambioInput}
                                     required
@@ -109,6 +110,7 @@ const ModalRegistroProducto = ({
                                 />
                             </Form.Group>
                         </Col>
+
                     </Row>
                 </Form>
             </Modal.Body>
@@ -122,7 +124,6 @@ const ModalRegistroProducto = ({
                 </Button>
             </Modal.Footer>
         </Modal>
-
     );
 };
 

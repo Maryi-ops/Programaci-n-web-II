@@ -121,7 +121,7 @@ const Productos = () => {
 
       setMostrarModal(false);
 
-      const nombreArchivo = '${Date.now( )}_${nuevoProducto.archivo.name}';
+      const nombreArchivo = `${Date.now( )}_${nuevoProducto.archivo.name}`;
 
       const { error: uploadError } = await supabase.storage
         .from("imagenes_productos")
@@ -134,7 +134,7 @@ const Productos = () => {
         .getPublicUrl(nombreArchivo);
       const urlPublica = urlData.publicUrl;
 
-      const { error } = await supabase.from("productos").insert([
+      const { error } = await supabase.from("Productos").insert([
         {
 
           nombre_producto: nuevoProducto.nombre_producto,
