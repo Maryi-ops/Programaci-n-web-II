@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar, Offcanvas } from "react-bootstrap";
 import logo from "../../assets/butterfly.png";
 import { supabase } from "../../database/supabaseconfig.js";
+import ChatIA from "../ia/ChatIA";
 
 const Encabezado = () => {
 
@@ -11,6 +12,8 @@ const Encabezado = () => {
   const location = useLocation(); // Para detectar la ruta actual
 
   const manejarToggle = () => setMostrarMenu(!mostrarMenu);
+
+  const [mostrarChatIA, setMostrarChatIA] = useState(false);
 
   const manejarNavegacion = (ruta) => {
     navigate(ruta);
@@ -50,6 +53,7 @@ const Encabezado = () => {
           Iniciar sesión
         </Nav.Link>
       </Nav>
+
     );
   } else {
     if (esCatalogo) {
@@ -76,6 +80,7 @@ const Encabezado = () => {
               <strong>Inicio</strong>
             </Nav.Link>
 
+
             <Nav.Link
               onClick={() => manejarNavegacion("/categorias")}
               className={mostrarMenu ? "color-texto-marca" : "text-white"}
@@ -101,13 +106,17 @@ const Encabezado = () => {
               <strong>Catálogo</strong>
             </Nav.Link>
 
-             {/* Opción para ir al catálogo público desde admin */}
+            {/* Opción para ir al catálogo público desde admin */}
             <Nav.Link
               onClick={() => manejarNavegacion("/empleados")}
               className={mostrarMenu ? "color-texto-marca" : "text-white"}
             >
               {mostrarMenu ? <i className="bi-images me-2"></i> : null}
               <strong>Empleados</strong>
+            </Nav.Link>
+
+            <Nav.Link onClick={() => setMostrarChatIA(true)} className="text-white">
+              <i className="bi bi-robot me-2"></i>
             </Nav.Link>
 
             <hr />
@@ -148,51 +157,54 @@ const Encabezado = () => {
   }
 
   return (
-    <Navbar expand="md" fixed="top" className="color-navbar shadow-lg" variant="dark">
-      <Container>
+    <>
+      <Navbar expand="md" fixed="top" className="color-navbar shadow-lg" variant="dark">
+        <Container>
 
-        <Navbar.Brand
-          onClick={() => manejarNavegacion(esCatalogo ? "/catalogo" : "/")}
-          className="text-white fw-bold d-flex align-items-center"
-          style={{ cursor: "pointer" }}
-        >
-          <img
-            alt=""
-            src={logo}
-            width="45"
-            height="45"
-            className="d-inline-block me-2"
-          />
-          <strong>
-            <h4 className="mb-0">Discosa</h4>
-          </strong>
-        </Navbar.Brand>
+          <Navbar.Brand
+            onClick={() => manejarNavegacion(esCatalogo ? "/catalogo" : "/")}
+            className="text-white fw-bold d-flex align-items-center"
+            style={{ cursor: "pointer" }}
+          >
+            <img
+              alt=""
+              src={logo}
+              width="45"
+              height="45"
+              className="d-inline-block me-2"
+            />
+            <strong>
+              <h4 className="mb-0">Discosa</h4>
+            </strong>
+          </Navbar.Brand>
 
-        {/* Botón del menú */}
-        {!esLogin && (
-          <Navbar.Toggle
-            aria-controls="menu-offcanvas"
-            onClick={manejarToggle}
-          />
-        )}
+          {/* Botón del menú */}
+          {!esLogin && (
+            <Navbar.Toggle
+              aria-controls="menu-offcanvas"
+              onClick={manejarToggle}
+            />
+          )}
 
-        {/* Menú lateral */}
-        <Navbar.Offcanvas
-          id="menu-offcanvas"
-          placement="end"
-          show={mostrarMenu}
-          onHide={() => setMostrarMenu(false)}
-        >
-          <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Menú Discosa</Offcanvas.Title>
-          </Offcanvas.Header>
+          {/* Menú lateral */}
+          <Navbar.Offcanvas
+            id="menu-offcanvas"
+            placement="end"
+            show={mostrarMenu}
+            onHide={() => setMostrarMenu(false)}
+          >
+            <Offcanvas.Header closeButton>
+              <Offcanvas.Title>Menú Discosa</Offcanvas.Title>
+            </Offcanvas.Header>
 
-          <Offcanvas.Body>
-            {contenidoMenu}
-          </Offcanvas.Body>
-        </Navbar.Offcanvas>
-      </Container>
-    </Navbar>
+            <Offcanvas.Body>
+              {contenidoMenu}
+            </Offcanvas.Body>
+          </Navbar.Offcanvas>
+        </Container>
+      </Navbar>
+      <ChatIA mostrar={mostrarChatIA} onCerrar={() => setMostrarChatIA(false)} />
+    </>
   );
 };
 
