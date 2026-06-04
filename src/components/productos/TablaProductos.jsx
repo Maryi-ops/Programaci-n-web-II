@@ -11,7 +11,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 const TablaProductos = ({
   productos,
   abrirModalEdicion,
-  abrirModalEliminar,
+  abrirModalEliminacion,
   generarPDFProducto,
 }) => {
 
@@ -164,7 +164,7 @@ const TablaProductos = ({
                       size="sm"
                       className="m-1"
                       onClick={() =>
-                        abrirModalEliminar(
+                        abrirModalEliminacion(
                           producto
                         )
                       }
