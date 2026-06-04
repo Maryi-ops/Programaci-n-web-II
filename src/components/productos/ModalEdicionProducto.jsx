@@ -19,7 +19,10 @@ const ModalEdicionProducto = ({
     return (
         <Modal
             show={mostrarModalEdicion}
-            onHide={() => setMostrarModalEdicion(false)}
+            onHide={() => {
+                setMostrarModalEdicion(false);
+                setProductoEditar(null);
+            }}
             centered
         >
 
@@ -78,7 +81,7 @@ const ModalEdicionProducto = ({
                                     key={c.id_categoria}
                                     value={c.id_categoria}
                                 >
-                                    {c.nombre_categoria}
+                                    {c.nombre || c.nombre_categoria}
                                 </option>
                             ))}
 
@@ -172,15 +175,18 @@ const ModalEdicionProducto = ({
             <Modal.Footer>
 
                 <Button
+                    type="button"
                     variant="secondary"
-                    onClick={() =>
-                        setMostrarModalEdicion(false)
-                    }
+                    onClick={() => {
+                        setMostrarModalEdicion(false);
+                        setProductoEditar(null);
+                    }}
                 >
                     Cancelar
                 </Button>
 
                 <Button
+                    type="button"
                     variant="warning"
                     onClick={actualizarProducto}
                 >

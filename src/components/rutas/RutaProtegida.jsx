@@ -9,7 +9,7 @@ const RutaProtegida = ({ children }) => {
     // Log para depuración
     console.log("Usuario autenticado:", estaLogueado);
 
-    // Si está autenticado,redirige a la página de login
+    // Si no está autenticado, redirige a la página de login
     return estaLogueado ? children : <Navigate to="/login" replace />;
 
 };

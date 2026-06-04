@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
-
-import { Table, Spinner, Button, Image } from "react-bootstrap";
+import {
+  Table,
+  Spinner,
+  Button,
+  Image,
+} from "react-bootstrap";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -8,28 +12,22 @@ const TablaProductos = ({
   productos,
   abrirModalEdicion,
   abrirModalEliminar,
-  generarPDFProducto
+  generarPDFProducto,
 }) => {
 
   const [loading, setLoading] =
     useState(true);
 
   useEffect(() => {
-    if (productos) {
-      setLoading(false);
-    } else {
-      setLoading(true);
-    }
+    setLoading(!productos);
   }, [productos]);
 
   return (
-
     <>
-
       {loading ? (
 
         <div className="text-center">
-          
+
           <h4>
             Cargando productos...
           </h4>
@@ -80,127 +78,129 @@ const TablaProductos = ({
 
           <tbody>
 
-            {productos.map((producto) => (
+            {productos.map(
+              (producto) => (
 
-              <tr key={producto.id_producto}>
-
-                <td>
-                  {producto.id_producto}
-                </td>
-
-                {/* IMAGEN */}
-
-                <td>
-
-                  <Image
-                    src={producto.url_imagen}
-                    alt="Producto"
-                    rounded
-                    width="50"
-                    height="50"
-                    style={{
-                      objectFit: "cover"
-                    }}
-                  />
-
-                </td>
-
-                {/* NOMBRE */}
-
-                <td>
-                  {producto.nombre_producto}
-                </td>
-
-                {/* DESCRIPCION */}
-
-                <td className="d-none d-md-table-cell">
-
-                  {producto.descripcion_producto}
-
-                </td>
-
-                {/* CATEGORIA */}
-
-                <td>
-
-                  {
-                    producto.categorias
-                      ?.nombre_categoria
+                <tr
+                  key={
+                    producto.id_producto
                   }
+                >
 
-                </td>
-
-                {/* PRECIO */}
-
-                <td>
-
-                  C$
-                  {parseFloat(
-                    producto.precio_venta
-                  ).toFixed(2)}
-
-                </td>
-
-                {/* BOTONES */}
-
-                <td className="text-center">
-
-                  {/* EDITAR */}
-
-                  <Button
-                    variant="outline-warning"
-                    size="sm"
-                    className="m-1"
-                    onClick={() =>
-                      abrirModalEdicion(
-                        producto
-                      )
+                  <td>
+                    {
+                      producto.id_producto
                     }
-                  >
+                  </td>
 
-                    <i className="bi bi-pencil"></i>
+                  <td>
 
-                  </Button>
+                    <Image
+                      src={
+                        producto.url_imagen
+                      }
+                      alt="Producto"
+                      rounded
+                      width="50"
+                      height="50"
+                      style={{
+                        objectFit:
+                          "cover",
+                      }}
+                    />
 
-                  {/* ELIMINAR */}
+                  </td>
 
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    className="m-1"
-                    onClick={() =>
-                      abrirModalEliminar(
-                        producto
-                      )
+                  <td>
+                    {
+                      producto.nombre_producto
                     }
-                  >
+                  </td>
 
-                    <i className="bi bi-trash"></i>
+                  <td className="d-none d-md-table-cell">
 
-                  </Button>
-
-                  {/* PDF */}
-
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="m-1"
-                    onClick={() =>
-                      generarPDFProducto(
-                        producto
-                      )
+                    {
+                      producto.descripcion_producto
                     }
-                  >
-                    <i className="bi bi-file-earmark-pdf"></i>
-                  </Button>
-                </td>
-              </tr>
-            ))}
+
+                  </td>
+
+                  <td>
+
+                    {
+                      producto.categoria_producto
+                    }
+
+                  </td>
+
+                  <td>
+
+                    C$
+                    {parseFloat(
+                      producto.precio_venta || 0
+                    ).toFixed(2)}
+
+                  </td>
+
+                  <td className="text-center">
+
+                    <Button
+                      variant="outline-warning"
+                      size="sm"
+                      className="m-1"
+                      onClick={() =>
+                        abrirModalEdicion(
+                          producto
+                        )
+                      }
+                    >
+
+                      <i className="bi bi-pencil"></i>
+
+                    </Button>
+
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      className="m-1"
+                      onClick={() =>
+                        abrirModalEliminar(
+                          producto
+                        )
+                      }
+                    >
+
+                      <i className="bi bi-trash"></i>
+
+                    </Button>
+
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="m-1"
+                      onClick={() =>
+                        generarPDFProducto(
+                          producto
+                        )
+                      }
+                    >
+
+                      <i className="bi bi-file-earmark-pdf"></i>
+
+                    </Button>
+
+                  </td>
+
+                </tr>
+
+              )
+            )}
 
           </tbody>
-        </Table>
-      )}
 
+        </Table>
+
+      )}
     </>
   );
 };

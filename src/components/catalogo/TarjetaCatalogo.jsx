@@ -22,7 +22,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
         tabIndex={0}
         onClick={() => setMostrarModal(true)}
         onKeyDown={(e) => e.key === "Enter" && setMostrarModal(true)}
-        aria-labelledby={`producto-${producto.id_productos}-title`}
+        aria-labelledby={`producto-${producto.id_producto}-title`}
       >
         {/* Visualización de la imagen del producto */}
         <div className="ratio ratio-1x1 bg-light" style={{ overflow: "hidden" }}>
@@ -46,7 +46,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
         {/* Cuerpo de la tarjeta */}
         <Card.Body className="d-flex flex-column p-3">
           <Card.Title
-            id={`producto-${producto.id_productos}-title`}
+            id={`producto-${producto.id_producto}-title`}
             className="h6 fw-bold text-dark mb-2"
           >
             {producto.nombre}

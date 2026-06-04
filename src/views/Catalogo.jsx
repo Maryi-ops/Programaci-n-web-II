@@ -19,7 +19,7 @@ const Catalogo = () => {
       setCargando(true);
       const [resProductos, resCategorias] = await Promise.all([
         supabase
-          .from("productos")
+          .from("Productos")
           .select("*")
           .order("nombre", { ascending: true }),
         supabase
@@ -148,7 +148,7 @@ const Catalogo = () => {
         {!cargando && productosFiltrados.length > 0 && (
           <Row className="g-4">
             {productosFiltrados.map((producto) => (
-              <Col xs={12} sm={6} md={4} lg={3} key={producto.id_productos}>
+              <Col xs={12} sm={6} md={4} lg={3} key={producto.id_producto}>
                 <TarjetaCatalogo
                   producto={producto}
                   categoriaNombre={obtenerNombreCategoria(producto.categoria_id)}

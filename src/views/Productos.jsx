@@ -19,7 +19,7 @@ const Productos = () => {
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
-  
+
   // Estados para Eliminación y Paginación
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
@@ -36,15 +36,7 @@ const Productos = () => {
     archivo: null,
   });
 
-  const [productoEditar, setProductoEditar] = useState({
-    id_producto: "",
-    nombre_producto: "",
-    descripcion_producto: "",
-    categoria_producto: "",
-    precio_venta: "",
-    url_imagen: "",
-    archivo: null,
-  });
+  const [productoEditar, setProductoEditar] = useState(null);
 
   // Manejador de Inputs de texto
   const manejoCambioInput = (e) => {
@@ -91,9 +83,14 @@ const Productos = () => {
     } else {
       const textoLower = textoBusqueda.toLowerCase().trim();
       const filtrados = productos.filter((prod) => {
-        const nombre = prod.nombre?.toLowerCase() || "";
-        const descripcion = prod.descripcion?.toLowerCase() || "";
-        const precio = prod.precio?.toString() || "";
+        const nombre =
+          prod.nombre_producto?.toLowerCase() || "";
+
+        const descripcion =
+          prod.descripcion_producto?.toLowerCase() || "";
+
+        const precio =
+          prod.precio_venta?.toString() || "";
         return (
           nombre.includes(textoLower) ||
           descripcion.includes(textoLower) ||
@@ -124,7 +121,7 @@ const Productos = () => {
         .select("*")
         .order("id_categoria", { ascending: true });
       if (error) throw error;
-      
+
       const categoriasMapeadas = (data || []).map((cat) => ({
         ...cat,
         id_categoria: cat.id_categoria,
@@ -141,20 +138,22 @@ const Productos = () => {
     try {
       setCargando(true);
       const { data, error } = await supabase
-        .from("productos")
+        .from("Productos")
         .select("*")
-        .order("id_productos", { ascending: true });
+        .order("id_producto", { ascending: true });
       if (error) throw error;
-      
+
       // Mapear los datos de la base de datos a lo que esperan los componentes
       const productosMapeados = (data || []).map((prod) => ({
         ...prod,
-        id_producto: prod.id_productos,
-        nombre: prod.nombre,
-        precio: prod.precio,
-        categoria_id: prod.categoria_id,
+        id_producto: prod.id_producto,
+        nombre_producto: prod.nombre_producto,
+        descripcion_producto:
+          prod.descripcion_producto,
+        precio_venta: prod.precio_venta,
+        categoria_producto:
+          prod.categoria_producto,
         url_imagen: prod.url_imagen,
-        descripcion: prod.descripcion
       }));
       setProductos(productosMapeados);
     } catch (err) {
@@ -191,7 +190,7 @@ const Productos = () => {
 
       // 2. Subir imagen a Supabase Storage
       const nombreArchivo = `${Date.now()}_${nuevoProducto.archivo.name}`;
-      
+
       const { error: uploadError } = await supabase.storage
         .from("imagenes_productos")
         .upload(nombreArchivo, nuevoProducto.archivo);
@@ -202,19 +201,20 @@ const Productos = () => {
       const { data: urlData } = supabase.storage
         .from("imagenes_productos")
         .getPublicUrl(nombreArchivo);
-      
+
       const urlPublica = urlData.publicUrl;
 
       // 4. Guardar todo en la base de datos (Tabla productos)
       const { error: errorInsert } = await supabase
-        .from("productos")
+        .from("Productos")
         .insert([
           {
-            nombre: nuevoProducto.nombre_producto,
-            precio: parseFloat(nuevoProducto.precio_venta),
-            categoria_id: parseInt(nuevoProducto.categoria_producto),
+            nombre_producto: nuevoProducto.nombre_producto,
+            precio_venta: parseFloat(nuevoProducto.precio_venta),
+            categoria_producto: parseInt(nuevoProducto.categoria_producto),
+            descripcion_producto:
+              nuevoProducto.descripcion_producto || null,
             url_imagen: urlPublica,
-            descripcion: nuevoProducto.descripcion_producto || null
           },
         ]);
 
@@ -242,7 +242,8 @@ const Productos = () => {
     try {
       // 1. Validar campos obligatorios
       if (
-        !productoEditar.nombre_producto.trim() ||
+        !productoEditar ||
+        !productoEditar.nombre_producto?.trim() ||
         !productoEditar.categoria_producto ||
         !productoEditar.precio_venta
       ) {
@@ -258,16 +259,19 @@ const Productos = () => {
 
       // 2. Preparar los datos actualizados (ajustando a los nombres de la base de datos)
       let datosActualizados = {
-        nombre: productoEditar.nombre_producto,
-        precio: parseFloat(productoEditar.precio_venta),
-        categoria_id: parseInt(productoEditar.categoria_producto),
-        descripcion: productoEditar.descripcion_producto || null
+        nombre_producto: productoEditar.nombre_producto,
+        precio_venta: parseFloat(productoEditar.precio_venta),
+        categoria_producto: parseInt(
+          productoEditar.categoria_producto
+        ),
+        descripcion_producto:
+          productoEditar.descripcion_producto || null,
       };
 
       // 3. Si se selecciona una nueva imagen, se sube al bucket 'imagenes_productos'
       if (productoEditar.archivo) {
-        const nombreArchivo = `${Date.now()}_${productoEditar.archivo.name}`; 
-        
+        const nombreArchivo = `${Date.now()}_${productoEditar.archivo.name}`;
+
         const { error: uploadError } = await supabase.storage
           .from("imagenes_productos")
           .upload(nombreArchivo, productoEditar.archivo);
@@ -278,28 +282,39 @@ const Productos = () => {
         const { data: urlData } = supabase.storage
           .from("imagenes_productos")
           .getPublicUrl(nombreArchivo);
-          
+
         datosActualizados.url_imagen = urlData.publicUrl;
 
         // 5. Se elimina la imagen anterior del bucket
         if (productoEditar.url_imagen) {
           const nombreAnterior = productoEditar.url_imagen.split("/").pop().split("?")[0];
-          await supabase.storage.from("imagenes_productos").remove([nombreAnterior]).catch(() => {});
+          await supabase.storage.from("imagenes_productos").remove([nombreAnterior]).catch(() => { });
         }
       }
 
-      // 6. Finalmente, se actualizan los datos en la tabla 'productos'
+      // 6. Finalmente, se actualizan los datos en la tabla 'Productos'
       const { error } = await supabase
-        .from("productos")
+        .from("Productos")
         .update(datosActualizados)
-        .eq("id_productos", productoEditar.id_producto);
+        .eq("id_producto", productoEditar.id_producto);
 
       if (error) throw error;
 
+      // Recargar productos
       await cargarProductos();
 
-      setToast({ mostrar: true, mensaje: "Producto actualizado correctamente", tipo: "exito" });
+      // Limpiar estado
+      setProductoEditar(null);
 
+      // Cerrar modal
+      setMostrarModalEdicion(false);
+
+      // Notificación
+      setToast({
+        mostrar: true,
+        mensaje: "Producto actualizado correctamente",
+        tipo: "exito",
+      });
     } catch (err) {
       console.error("Error al actualizar:", err);
       setToast({ mostrar: true, mensaje: "Error al actualizar producto", tipo: "error" });
@@ -310,13 +325,18 @@ const Productos = () => {
   const abrirModalEdicion = (producto) => {
     setProductoEditar({
       id_producto: producto.id_producto,
-      nombre_producto: producto.nombre,
-      descripcion_producto: producto.descripcion || "",
-      categoria_producto: producto.categoria_id,
-      precio_venta: producto.precio,
-      url_imagen: producto.url_imagen || "",
+      nombre_producto: producto.nombre_producto,
+      descripcion_producto:
+        producto.descripcion_producto || "",
+      categoria_producto:
+        producto.categoria_producto,
+      precio_venta:
+        producto.precio_venta,
+      url_imagen:
+        producto.url_imagen || "",
       archivo: null,
     });
+
     setMostrarModalEdicion(true);
   };
 
@@ -330,9 +350,9 @@ const Productos = () => {
     try {
       if (productoAEliminar.url_imagen) {
         const nombreAnterior = productoAEliminar.url_imagen.split("/").pop().split("?")[0];
-        await supabase.storage.from("imagenes_productos").remove([nombreAnterior]).catch(() => {});
+        await supabase.storage.from("imagenes_productos").remove([nombreAnterior]).catch(() => { });
       }
-      const { error } = await supabase.from("productos").delete().eq("id_productos", productoAEliminar.id_producto);
+      const { error } = await supabase.from("Productos").delete().eq("id_producto", productoAEliminar.id_producto);
       if (error) throw error;
       await cargarProductos();
       setMostrarModalEliminacion(false);
@@ -404,10 +424,10 @@ const Productos = () => {
           </Col>
         </Row>
       )}
-      
+
       {/* Paginación Dinámica */}
       {!cargando && productosFiltrados.length > 0 && (
-        <Paginacion 
+        <Paginacion
           registrosPorPagina={registrosPorPagina} totalRegistros={productosFiltrados.length}
           paginaActual={paginaActual} establecerPaginaActual={setPaginaActual}
           establecerRegistrosPorPagina={setRegistrosPorPagina}
@@ -429,17 +449,16 @@ const Productos = () => {
         mostrarModalEdicion={mostrarModalEdicion}
         setMostrarModalEdicion={setMostrarModalEdicion}
         productoEditar={productoEditar}
-        manejoCambioInputEdicion={manejoCambioInputEdicion}
-        manejoCambioArchivoActualizar={manejoCambioArchivoActualizar}
+        setProductoEditar={setProductoEditar}
         actualizarProducto={actualizarProducto}
         categorias={categorias}
       />
 
       <ModalEliminacionProducto
-        mostrarModalEliminacion={mostrarModalEliminacion}
-        setMostrarModalEliminacion={setMostrarModalEliminacion}
+        mostrarModalEliminar={mostrarModalEliminacion}
+        setMostrarModalEliminar={setMostrarModalEliminacion}
         eliminarProducto={eliminarProducto}
-        producto={productoAEliminar}
+        productoEliminar={productoAEliminar}
       />
 
       <NotificacionOperacion
