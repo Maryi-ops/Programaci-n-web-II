@@ -6,7 +6,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
   const [mostrarModal, setMostrarModal] = useState(false);
 
   // Variables para la longitud de la descripción
-  const descripcion = producto.descripcion || "";
+  const descripcion = producto.descripcion_producto || "";
   const previsualizacionTexto = descripcion.length > 50 
     ? descripcion.substring(0, 50) + "..." 
     : descripcion;
@@ -29,7 +29,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
           {producto.url_imagen ? (
             <img
               src={producto.url_imagen}
-              alt={producto.nombre}
+              alt={producto.nombre_producto}
               className="card-img-top object-fit-cover"
               loading="lazy"
               style={{ transition: "transform 0.4s" }}
@@ -49,7 +49,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
             id={`producto-${producto.id_producto}-title`}
             className="h6 fw-bold text-dark mb-2"
           >
-            {producto.nombre}
+            {producto.nombre_producto}
           </Card.Title>
 
           {descripcion && (
@@ -71,7 +71,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
           <hr />
           <div className="mt-auto pt-2">
             <h4 className="text-success fw-bold mb-0">
-              ${parseFloat(producto.precio).toFixed(2)}
+              C${parseFloat(producto.precio_venta || 0).toFixed(2)}
             </h4>
           </div>
         </Card.Body>
@@ -81,7 +81,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
       <Modal show={mostrarModal} onHide={() => setMostrarModal(false)} size="lg" centered>
         <Modal.Header closeButton className="border-0 pb-0">
           <Modal.Title className="fw-bold fs-4">
-            {producto.nombre}
+            {producto.nombre_producto}
           </Modal.Title>
         </Modal.Header>
 
@@ -91,7 +91,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
               {producto.url_imagen ? (
                 <img
                   src={producto.url_imagen}
-                  alt={producto.nombre}
+                  alt={producto.nombre_producto}
                   className="img-fluid rounded shadow-sm"
                   style={{ maxHeight: "400px", objectFit: "contain", width: "100%" }}
                 />
@@ -111,7 +111,7 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
               </div>
 
               <h3 className="text-success fw-bold mb-4">
-                ${parseFloat(producto.precio).toFixed(2)}
+                C${parseFloat(producto.precio_venta || 0).toFixed(2)}
               </h3>
 
               {descripcion && (

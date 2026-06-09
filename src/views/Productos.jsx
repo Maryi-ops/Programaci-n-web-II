@@ -181,7 +181,7 @@ const generarPDFProducto = (producto) => {
     try {
       setCargando(true);
       const { data, error } = await supabase
-        .from("Productos")
+        .from("productos")
         .select("*")
         .order("id_producto", { ascending: true });
       if (error) throw error;
@@ -249,7 +249,7 @@ const generarPDFProducto = (producto) => {
 
       // 4. Guardar todo en la base de datos (Tabla productos)
       const { error: errorInsert } = await supabase
-        .from("Productos")
+        .from("productos")
         .insert([
           {
             nombre_producto: nuevoProducto.nombre_producto,
@@ -337,7 +337,7 @@ const generarPDFProducto = (producto) => {
 
       // 6. Finalmente, se actualizan los datos en la tabla 'Productos'
       const { error } = await supabase
-        .from("Productos")
+        .from("productos")
         .update(datosActualizados)
         .eq("id_producto", productoEditar.id_producto);
 

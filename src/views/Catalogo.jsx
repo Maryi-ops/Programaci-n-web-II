@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { Container, Row, Col, Spinner, Alert, Form } from "react-bootstrap";
+import React, { useEffect, useState, useMemo } from 'react';
+import { Row, Col, Spinner, Alert, Form } from "react-bootstrap";
 import { supabase } from "../database/supabaseconfig";
 import TarjetaCatalogo from "../components/catalogo/TarjetaCatalogo";
 import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
@@ -13,19 +13,13 @@ const Catalogo = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // Método para la carga de datos
+  // Método para cargar datos
   const cargarDatos = async () => {
     try {
       setCargando(true);
       const [resProductos, resCategorias] = await Promise.all([
-        supabase
-          .from("Productos")
-          .select("*")
-          .order("nombre", { ascending: true }),
-        supabase
-          .from("categorias")
-          .select("id_categoria, nombre")
-          .order("nombre"),
+        supabase.from("productos").select("*").order("nombre_producto", { ascending: true }),
+        supabase.from("categorias").select("id_categoria, nombre_categoria").order("nombre_categoria")
       ]);
 
       if (resProductos.error) throw resProductos.error;
@@ -45,119 +39,108 @@ const Catalogo = () => {
     cargarDatos();
   }, []);
 
-  // Variable para la manipulación de las categorías filtradas
+  // Lógica de filtrado y búsqueda
   const productosFiltrados = useMemo(() => {
     let filtrados = productos;
 
     if (categoriaSeleccionada !== "todas") {
-      filtrados = filtrados.filter(
-        (prod) => prod.categoria_id === parseInt(categoriaSeleccionada)
+      filtrados = filtrados.filter(producto =>
+        producto.categoria_producto === parseInt(categoriaSeleccionada)
       );
     }
 
     if (textoBusqueda.trim()) {
       const textoLower = textoBusqueda.toLowerCase().trim();
+      filtrados = filtrados.filter(producto => {
+        const nombre = producto.nombre_producto?.toLowerCase() || "";
+        const descripcion = producto.descripcion_producto?.toLowerCase() || "";
+        const precioTexto = producto.precio_venta?.toString() || "";
 
-      filtrados = filtrados.filter((prod) => {
-        const nombre = prod.nombre?.toLowerCase() || "";
-        const descripcion = prod.descripcion?.toLowerCase() || "";
-        const precioTexto = prod.precio?.toString() || "";
-
-        return (
-          nombre.includes(textoLower) ||
+        return nombre.includes(textoLower) ||
           descripcion.includes(textoLower) ||
-          precioTexto.includes(textoLower)
-        );
+          precioTexto.includes(textoLower);
       });
     }
-
     return filtrados;
   }, [productos, categoriaSeleccionada, textoBusqueda]);
 
-  // Métodos de manejo de variables de estado
-  const manejarCambioCategoria = (e) => {
-    setCategoriaSeleccionada(e.target.value);
-  };
+  // Manejadores de eventos
+  const manejarCambioCategoria = (e) => setCategoriaSeleccionada(e.target.value);
+  const manejarCambioBusqueda = (e) => setTextoBusqueda(e.target.value);
 
-  const manejarCambioBusqueda = (e) => {
-    // Adaptación por si el componente envía directamente el string o el evento
-    const valor = e && e.target ? e.target.value : (typeof e === 'string' ? e : '');
-    setTextoBusqueda(valor);
-  };
-
-  // Obtener nombre de categoría
   const obtenerNombreCategoria = (idCategoria) => {
-    const cat = categorias.find((c) => c.id_categoria === idCategoria);
-    return cat ? cat.nombre : "Sin categoría";
+    const cat = categorias.find(c => c.id_categoria === idCategoria);
+    return cat ? cat.nombre_categoria : "Sin categoría";
   };
 
   return (
-    <Container className="mt-3">
-      <Row className="align-items-center mb-3">
-        <Col className="d-flex align-items-center">
-          <h3 className="mb-0">
-            <i className="bi-images me-2"></i> Catálogo
-          </h3>
-        </Col>
-
-        <Col xs={6} sm={5} md={4} lg={3} className="text-end">
-          <Form.Select
-            value={categoriaSeleccionada}
-            onChange={manejarCambioCategoria}
-            className="shadow-sm"
-          >
-            <option value="todas">Categorías (Todas)</option>
-            {categorias.map((cat) => (
-              <option key={cat.id_categoria} value={cat.id_categoria}>
-                {cat.nombre}
-              </option>
-            ))}
-          </Form.Select>
+    <div className="mt-3 px-1">
+      <Row className="text-center mb-4">
+        <Col>
+          <p className="lead text-muted">Nuestros productos</p>
         </Col>
       </Row>
 
-      <hr />
-
-      <Row className="mb-4">
-        <Col md={6} lg={5}>
-          <CuadroBusquedas
-            busqueda={textoBusqueda}
-            setBusqueda={manejarCambioBusqueda}
-          />
+      {/* Selectores de búsqueda y filtro */}
+      <Row className="mb-4 align-items-end">
+        <Col md={4} className="mb-2">
+          <Form.Group controlId="filtroCategoria">
+            <Form.Select
+              value={categoriaSeleccionada}
+              onChange={manejarCambioCategoria}
+              className="shadow-sm"
+            >
+              <option value="todas">Todas las categorías</option>
+              {categorias.map(cat => (
+                <option key={cat.id_categoria} value={cat.id_categoria}>
+                  {cat.nombre_categoria}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+        <Col md={6} className="mb-2">
+          <Form.Group controlId="busquedaProducto">
+            <CuadroBusquedas
+              busqueda={textoBusqueda}
+              setBusqueda={manejarCambioBusqueda}
+            />
+          </Form.Group>
         </Col>
       </Row>
 
-        {/* Estados */}
-        {cargando && (
-          <Row className="text-center my-5">
-            <Col>
-              <Spinner animation="border" variant="success" size="lg" />
-              <p className="mt-3 text-muted">Cargando productos...</p>
+      {/* Estados de carga y resultados */}
+      {cargando ? (
+        <Row className="text-center my-5">
+          <Col>
+            <Spinner animation="border" variant="success" />
+            <p className="mt-3 text-muted">Cargando productos...</p>
+          </Col>
+        </Row>
+      ) : productosFiltrados.length === 0 ? (
+        <Alert variant="info" className="text-center">
+          <i className="bi bi-info-circle me-2"></i>
+          No se encontraron productos que coincidan con tu búsqueda.
+        </Alert>
+      ) : (
+        <Row className="g-3">
+          {productosFiltrados.map(producto => (
+            <Col xs={12} sm={6} md={4} lg={3} key={producto.id_producto}>
+              <TarjetaCatalogo
+                producto={producto}
+                nombreCategoria={obtenerNombreCategoria(producto.categoria_producto)}
+              />
             </Col>
-          </Row>
-        )}
+          ))}
+        </Row>
+      )}
 
-        {!cargando && productosFiltrados.length === 0 && (
-          <Alert variant="info" className="text-center">
-            <i className="bi bi-info-circle me-2"></i>
-            No se encontraron productos que coincidan con tu búsqueda.
-          </Alert>
-        )}
-
-        {/* Productos */}
-        {!cargando && productosFiltrados.length > 0 && (
-          <Row className="g-4">
-            {productosFiltrados.map((producto) => (
-              <Col xs={12} sm={6} md={4} lg={3} key={producto.id_producto}>
-                <TarjetaCatalogo
-                  producto={producto}
-                  categoriaNombre={obtenerNombreCategoria(producto.categoria_id)}
-                />
-              </Col>
-            ))}
-          </Row>
-        )}
-    </Container>
+      {error && (
+        <Alert variant="danger" className="mt-3 text-center">
+          {error}
+        </Alert>
+      )}
+    </div>
   );
 };
 
