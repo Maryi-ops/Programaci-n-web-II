@@ -13,6 +13,7 @@ const TablaProductos = ({
   abrirModalEdicion,
   abrirModalEliminacion,
   generarPDFProducto,
+  generarQRImagen,
 }) => {
 
   const [loading, setLoading] =
@@ -172,6 +173,17 @@ const TablaProductos = ({
 
                       <i className="bi bi-trash"></i>
 
+                    </Button>
+
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => {
+                        generarQRImagen(producto);
+                      }}
+                      title="Generar QR de la imagen"
+                    >
+                      <i className="bi bi-qr-code"></i>
                     </Button>
 
                     <Button

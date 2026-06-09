@@ -18,6 +18,21 @@ const TablaCategorias = ({
         }
     }, [categorias]);
 
+    const copiarCategoria = async (categoria) => {
+        try {
+            const texto = `ID: ${categoria.id_categoria}
+Nombre: ${categoria.nombre_categoria}
+Descripción: ${categoria.descripcion_categoria}`;
+
+            await navigator.clipboard.writeText(texto);
+
+            alert("Categoría copiada al portapapeles");
+        } catch (error) {
+            console.error("Error al copiar:", error);
+            alert("Error al copiar al portapapeles");
+        }
+    };
+
     return (
         <>
             {loading ? (
@@ -67,6 +82,17 @@ const TablaCategorias = ({
                                     >
                                         <i className="bi bi-file-earmark-pdf"></i>
                                     </Button>
+
+                                    <Button
+                                        variant="outline-success"
+                                        size="sm"
+                                        className="m-1"
+                                        onClick={() => copiarCategoria(categoria)}
+                                        title="Copiar al portapapeles"
+                                    >
+                                        <i className="bi bi-clipboard"></i>
+                                    </Button>
+                                    
                                 </td>
                             </tr>
                         ))}

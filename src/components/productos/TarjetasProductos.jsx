@@ -18,7 +18,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 const TarjetasProductos = ({
   productos,
   abrirModalEdicion,
-  abrirModalEliminar,
+  abrirModalEliminacion,
   generarPDFProducto,
 }) => {
 
@@ -289,7 +289,7 @@ const TarjetasProductos = ({
                           size="sm"
                           onClick={() => {
 
-                            abrirModalEliminar(
+                            abrirModalEliminacion(
                               producto
                             );
 

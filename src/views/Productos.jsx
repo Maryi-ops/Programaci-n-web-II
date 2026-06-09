@@ -9,6 +9,9 @@ import TablaProductos from "../components/productos/TablaProductos";
 import TarjetaProducto from "../components/productos/TarjetasProductos";
 import ModalEliminacionProducto from "../components/productos/ModalEliminacionProducto";
 import Paginacion from "../components/ordenamiento/Paginacion";
+import ModalQRProducto from "../components/productos/ModalQRProducto";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
@@ -19,6 +22,46 @@ const Productos = () => {
 
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+
+  const [mostrarModalQR, setMostrarModalQR] = useState(false);
+const [productoQR, setProductoQR] = useState(null);
+
+const generarQRImagen = (producto) => {
+  if (!producto?.url_imagen) {
+    setToast({
+      mostrar: true,
+      mensaje: "Este producto no tiene imagen asociada",
+      tipo: "advertencia"
+    });
+    return;
+  }
+
+  setProductoQR(producto);
+  setMostrarModalQR(true);
+};
+
+const generarPDFProducto = (producto) => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("Reporte de Producto", 14, 20);
+  doc.line(14, 25, 195, 25);
+
+  doc.setFontSize(12);
+  autoTable(doc, {
+    startY: 35,
+    head: [["Campo", "Valor"]],
+    body: [
+      ["ID", producto.id_producto],
+      ["Nombre", producto.nombre_producto],
+      ["Descripción", producto.descripcion_producto || ""],
+      ["Categoría", producto.categoria_producto],
+      ["Precio", `C$ ${parseFloat(producto.precio_venta || 0).toFixed(2)}`],
+    ],
+  });
+
+  doc.save(`producto_${producto.id_producto}.pdf`);
+};
 
   // Estados para Eliminación y Paginación
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
@@ -411,7 +454,7 @@ const Productos = () => {
       {!cargando && productosPaginados.length > 0 && (
         <Row className="d-lg-none">
           <Col xs={12}>
-            <TarjetaProducto productos={productosPaginados} categorias={categorias} abrirModalEdicion={abrirModalEdicion} abrirModalEliminacion={abrirModalEliminacion} />
+            <TarjetaProducto productos={productosPaginados} categorias={categorias} abrirModalEdicion={abrirModalEdicion} abrirModalEliminacion={abrirModalEliminacion} generarQRImagen={generarQRImagen} generarPDFProducto={generarPDFProducto} />
           </Col>
         </Row>
       )}
@@ -420,7 +463,7 @@ const Productos = () => {
       {!cargando && productosPaginados.length > 0 && (
         <Row className="d-none d-lg-block">
           <Col lg={12}>
-            <TablaProductos productos={productosPaginados} categorias={categorias} abrirModalEdicion={abrirModalEdicion} abrirModalEliminacion={abrirModalEliminacion} />
+            <TablaProductos productos={productosPaginados} categorias={categorias} abrirModalEdicion={abrirModalEdicion} abrirModalEliminacion={abrirModalEliminacion} generarQRImagen={generarQRImagen} generarPDFProducto={generarPDFProducto} />
           </Col>
         </Row>
       )}
@@ -467,6 +510,13 @@ const Productos = () => {
         tipo={toast.tipo}
         onCerrar={() => setToast({ ...toast, mostrar: false })}
       />
+
+      <ModalQRProducto
+        mostrar={mostrarModalQR}
+        onHide={() => setMostrarModalQR(false)}
+        producto={productoQR}
+      />
+      
     </Container>
   );
 };
