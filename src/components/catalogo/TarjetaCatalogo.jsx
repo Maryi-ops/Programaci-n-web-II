@@ -101,7 +101,6 @@ const TarjetaCatalogo = ({ producto, categoriaNombre }) => {
                 </div>
               )}
             </div>
-
             {/* Detalles a la derecha */}
             <div className="col-md-7">
               <div className="d-flex align-items-center mb-3">
