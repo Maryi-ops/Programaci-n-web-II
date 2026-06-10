@@ -8,7 +8,7 @@ import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import TablaProductos from "../components/productos/TablaProductos";
 import TarjetaProducto from "../components/productos/TarjetasProductos";
 import ModalEliminacionProducto from "../components/productos/ModalEliminacionProducto";
-import Paginacion from "../components/ordenamiento/Paginacion";
+import Paginacion from "../components/Ordenamiento/Paginacion";
 import ModalQRProducto from "../components/productos/ModalQRProducto";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";

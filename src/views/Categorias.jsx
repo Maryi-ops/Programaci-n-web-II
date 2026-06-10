@@ -8,7 +8,7 @@ import TablaCategorias from "../components/categorias/TablaCategoria";
 import TarjetaCategoria from "../components/categorias/TarjetaCategoria";
 import NotificacionOperacion from "../components/NotificacionOperacion";
 import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
-import Paginacion from "../components/ordenamiento/Paginacion";
+import Paginacion from "../components/Ordenamiento/Paginacion";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ModalEnvioCorreoCategorias from "../components/categorias/ModalEnvioCorreoCategorias";
